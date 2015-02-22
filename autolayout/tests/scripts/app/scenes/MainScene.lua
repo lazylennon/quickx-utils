@@ -1,5 +1,3 @@
-local VLayout = require("layout.VLayout")
-local HLayout = require("layout.HLayout")
 
 
 local MainScene = class("MainScene", function()
@@ -7,6 +5,10 @@ local MainScene = class("MainScene", function()
 end)
 
 function MainScene:ctor()
+    CCFileUtils:sharedFileUtils():addSearchPath("res/../../")
+    local VLayout = require("VLayout")
+    local HLayout = require("HLayout")
+
     local v_layout = VLayout.new()
         :pos(display.cx-200,display.cy)
         :addTo(self)

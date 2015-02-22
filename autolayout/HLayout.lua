@@ -4,7 +4,7 @@
 --
 
 
-local HLayout = class("HLayout", require("layout.BaseLayout"))
+local HLayout = class("HLayout", import(".BaseLayout"))
 
 function HLayout:init(_container, _padding)
 	HLayout.super.init(self, _container, _padding)

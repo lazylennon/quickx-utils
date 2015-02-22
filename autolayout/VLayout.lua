@@ -4,7 +4,7 @@
 --
 
 
-local VLayout = class("VLayout", require("layout.BaseLayout"))
+local VLayout = class("VLayout", import(".BaseLayout"))
 
 function VLayout:init(_container, _padding)
 	VLayout.super.init(self, _container, _padding)
