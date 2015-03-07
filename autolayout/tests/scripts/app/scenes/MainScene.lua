@@ -67,12 +67,17 @@ function MainScene:ctor()
     ui.newMenu({
         ui.newTTFLabelMenuItem({text = "add1", size = 30, listener = function()
             v_layout:push(display.newScale9Sprite("item.png",nil,nil,CCSize(80+-20,50+50)):add(ui.newTTFLabel({text=v_layout.index+1})))
+            v_layout:layout()
+        end}),
+
+        ui.newTTFLabelMenuItem({text = "rm1", size = 30, listener = function()
+            v_layout:pop()
             v_layout:layout(true,true)
         end}),
 
         ui.newTTFLabelMenuItem({text = "add2", size = 30, listener = function()
             h_layout:push(display.newScale9Sprite("item.png",nil,nil,CCSize(math.random(50,100),50)):add(ui.newTTFLabel({text=h_layout.index+1})))
-            h_layout:layout(true,true)
+            h_layout:layout()
         end}),
         ui.newTTFLabelMenuItem({text = "resize", size = 30, listener = function()
             v_layout:setViewSize(CCSize(math.random(100,300),math.random(100,300)))

@@ -25,7 +25,7 @@ function AutoLayout:init()
 	end
 	
 	self.layouts = {}
-	self.index = 1
+	self.index = 0
 end
 
 function AutoLayout:setSizeSuitEnable(_enbale)
@@ -43,6 +43,8 @@ end
 
 function AutoLayout:pushLayout(_layout, _direction)
 	assert(_direction)
+	self.index = self.index + 1
+
 	if _direction == kCCScrollViewDirectionVertical then
 		_layout:vvlayout()
 	else
@@ -50,7 +52,6 @@ function AutoLayout:pushLayout(_layout, _direction)
 	end
 	self.layouts[self.index] = _layout
 	self:getContainer():addChild(_layout)
-	self.index = self.index + 1
 
 	return self
 end
@@ -60,6 +61,21 @@ function AutoLayout:push(_item, _config)
 	layout:push(_item, _config)
 	self:pushLayout(layout, self:getDirection())
 	return layout
+end
+
+function AutoLayout:pop()
+	self:remove(self.index)
+end
+
+function AutoLayout:remove(_id)
+	if self.index <= 0 then
+		return
+	end
+	local layout = self.layouts[_id]
+	table.remove(self.layouts, _id)
+	self:getContainer():removeChild(layout)	
+
+	self.index = self.index - 1
 end
 
 function AutoLayout:setContainer(_container)
@@ -93,10 +109,17 @@ function AutoLayout:gotoEnd(_ani)
 end
 
 function AutoLayout:layout(_movetoend, _ani)
+	local length = 0
+	local offset = 0
+
 	if self:getDirection() == kCCScrollViewDirectionVertical then
+		length = self:getContentSize().height
+		offset = self:getContentOffset().y
 		local info = Layout:vlayout(self.layouts, nil, self:getViewSize().width)
 		self:setContentSize(CCSize(math.max(self:getViewSize().width, info.maxw), info.h))
 	else
+		-- length = self:getContentSize().width
+		-- offset = self:getContentOffset().x
 		local info = Layout:hlayout(self.layouts, nil, self:getViewSize().height)
 		self:setContentSize(CCSize(info.w, math.max(self:getViewSize().height, info.maxh)))
 	end
@@ -105,6 +128,16 @@ function AutoLayout:layout(_movetoend, _ani)
 		self:gotoEnd(_ani)
 	elseif _movetoend == false then
 		self:gotoBegin(_ani)
+	else
+		if not self.layouted then
+			self:gotoBegin(_ani)
+		else
+			if self:getDirection() == kCCScrollViewDirectionVertical then
+				self:setContentOffset(ccp(0, -(self:getContentSize().height-length)+offset),_ani)
+			else
+				-- self:setContentOffset(ccp((self:getContentSize().width-length)+offset, 0),_ani)
+			end	
+		end
 	end
 
 	if self.sizeSuitEnbale then
@@ -114,6 +147,8 @@ function AutoLayout:layout(_movetoend, _ani)
 			self:setTouchEnabled(self:getContentSize().width>self:getViewSize().width)
 		end
 	end
+
+	self.layouted = true
 end
 
 
