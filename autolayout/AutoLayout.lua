@@ -4,10 +4,11 @@
 --
 
 
-local Layout = import(".Layout")
+local Layout    = import(".Layout")
+local BoxLayout = import(".BoxLayout")
 
 local AutoLayout = class("AutoLayout", function(...)
-	local node = CCNodeExtend.extend(CCScrollView:create(...))
+	local node = CCScrollView:create(...)
 	node.old_setViewSize = node.setViewSize
 	node.old_setContainer = node.setContainer
 	return node
@@ -105,6 +106,31 @@ function AutoLayout:gotoEnd(_ani)
 		self:setContentOffset(ccp(0,math.max(0,- self:getContentSize().height + self:getViewSize().height)),_ani)
 	else
 		self:setContentOffset(ccp(math.min(0,- self:getContentSize().width + self:getViewSize().width) ,0),_ani)
+	end
+end
+
+
+function AutoLayout:pushGrid(_item_list, _stripe, _direction, _params, _padding)
+	_params = _params or {}
+	
+	local box = nil
+	local len = #(_item_list)
+	local size = nil
+	for i,v in ipairs(_item_list) do
+		if not box then
+			box = BoxLayout.new()
+		end
+		box:push(v, _padding)
+		if i%_stripe == 0 or i == len then
+			if _direction == kCCScrollViewDirectionHorizontal and not _params.w then
+				_params.w = box:measure(_direction, _params.padding or 0).w
+			elseif _direction == kCCScrollViewDirectionVertical and not _params.h then
+				_params.h = box:measure(_direction, _params.padding or 0).h				
+			end
+			box:layout(_direction, _params)
+			self:push(box)
+			box = nil
+		end
 	end
 end
 
