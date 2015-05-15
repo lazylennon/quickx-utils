@@ -30,6 +30,10 @@ function RichLabel:init(_text, _dimensions)
 	return self:initWithConfig(labelparser.parse(_text), _dimensions)
 end
 
+function RichLabel:setString(_text)
+	return self:initWithConfig(labelparser.parse(_text))
+end
+
 function RichLabel:initWithConfig(_config, _dimensions)
 	self:initItems(_config)
 	self:layout(_dimensions)
@@ -41,6 +45,9 @@ function RichLabel:getItem(_id)
 end
 
 function RichLabel:initItems(_content)
+	if self.content then
+		self.content:removeFromParent()
+	end
 	self.items = {}
 	self.content = display.newNode()
 		:addTo(self)
@@ -109,10 +116,17 @@ function RichLabel:setDimensions(_dimensions)
 	self:layout(_dimensions)
 end
 
-function RichLabel:setAnchorPoint(_anchor)
-	self:old_setAnchorPoint(_anchor)
+function RichLabel:setAnchorPoint(_anchor,args)
+	local ancX = _anchor
+	local ancY = args
+	print("type(_anchor):",type(_anchor))
+	if type(_anchor) == "table" or type(_anchor) == "userdata" then
+		ancX = _anchor.x
+		ancY = _anchor.y
+	end
+	self:old_setAnchorPoint(ccp(ancX,ancY))
 	if self.content then 
-		self.content:setPosition(ccp((-_anchor.x+0.5)*self.size.width, (-_anchor.y+0.5)*self.size.height))
+		self.content:setPosition(ccp((-ancX+0.5)*self.size.width, (-ancY+0.5)*self.size.height))
 	end
 
 	-- if DEBUG >= 2 then
