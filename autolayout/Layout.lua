@@ -11,10 +11,10 @@ local Layout = class("Layout", function(...)
 end)
 
 function Layout:ctor()
-	self.config         = {}
+	self.layout_config         = {}
 	self.items          = {}
-	self.config.padding = {w=2,h=2}
-	self.config.anchor  = ccp(0.5,0.5)
+	self.layout_config.padding = {w=2,h=2}
+	self.layout_config.anchor  = ccp(0.5,0.5)
 end
 
 function Layout:setPadding(_padding)
@@ -27,7 +27,7 @@ function Layout:push(_node, _config)
 	_config        = _config or {}
 	config.padding = _config.padding or {w=0,h=0}
 	config.anchor  = _config.anchor or ccp(0.5,0.5)
-	_node.config   = config
+	_node.layout_config   = config
 
 	if AUTOLAYOUT_DEBUG_ENABLE then
 		display.newColorLayer(ccc4(128,128,0,255))
@@ -49,7 +49,7 @@ function Layout:vlayout(_items, _padding, _width)
 	local anchor = nil
 	local x,y = 0,h
 	for i,v in ipairs(_items) do
-		config = v.config
+		config = v.layout_config
 		anchor = config.anchor.x
 
 		x = config.size.w * (v:getAnchorPoint().x - anchor) + anchor * w
@@ -75,7 +75,7 @@ function Layout:hlayout(_items, _padding, _height)
 	local anchor = nil
 	local x,y = 0,0
 	for i,v in ipairs(_items) do
-		config = v.config
+		config = v.layout_config
 		anchor = config.anchor.y
 
 		x = x + config.size.w * v:getAnchorPoint().x
@@ -99,13 +99,13 @@ function Layout:measure(_items, _padding)
 	local size = nil
 
 	for i,v in ipairs(_items) do
-		config = v.config
+		config = v.layout_config
 		assert(config.size==nil, "Aleady call!")
 		config.size = {
 			w = v:getContentSize().width + config.padding.w + _padding.w,
 			h = v:getContentSize().height + config.padding.h + _padding.h,
 		}
-		size = v.config.size
+		size = v.layout_config.size
 		w = w + size.w
 		h = h + size.h
 		maxw = math.max(maxw, size.w)
