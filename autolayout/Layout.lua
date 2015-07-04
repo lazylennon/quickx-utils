@@ -13,7 +13,7 @@ end)
 function Layout:ctor()
 	self.layout_config         = {}
 	self.items          = {}
-	self.layout_config.padding = {w=2,h=2}
+	self.layout_config.padding = {w=0,h=0}
 	self.layout_config.anchor  = ccp(0.5,0.5)
 end
 
